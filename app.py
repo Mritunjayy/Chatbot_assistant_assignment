@@ -5,7 +5,8 @@ import re
 from datetime import datetime
 from itertools import chain
 
-nltk.download('punkt')  # For tokenization
+nltk.download('punkt')
+nltk.download('punkt_tab')  # For tokenization
 from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)

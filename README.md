@@ -51,5 +51,5 @@ This is a natural language chat assistant that processes user queries, converts 
 ## Contributors
 - Mritunjay Pandey (pmritunjay947@gmail.com)
 
-## PS- Any corrections and contributionshighly welcomed!! (:
+## PS- Any corrections and contributions highly welcomed!! (:
 

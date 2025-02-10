@@ -1,6 +1,6 @@
 import sqlite3
 
-# Connect to SQLite database (or create it)
+# Connect to SQLite database
 conn = sqlite3.connect("company.db")
 cursor = conn.cursor()
 

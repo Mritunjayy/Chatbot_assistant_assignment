@@ -10,48 +10,14 @@ from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)
 
-# Function to connect to SQLite database
+#connect to SQLite database
 def connect_db():
     return sqlite3.connect("company.db")
-
-# Function to process natural language queries and generate SQL
-# def process_query(user_query):
-#     tokens = word_tokenize(user_query.lower())
-
-#     if "employees" in tokens and "department" in tokens:
-#         # Example: "Show me all employees in the Sales department"
-#         words = user_query.split()
-#         department = words[-2]  # Assuming last word before 'department' is the department name
-#         sql_query = f"SELECT Name FROM Employees WHERE Department='{department}'"
-#         return sql_query
-
-#     elif "manager" in tokens and "department" in tokens:
-#         # Example: "Who is the manager of the Sales department?"
-#         words = user_query.split()
-#         department = words[-2]
-#         sql_query = f"SELECT Manager FROM Departments WHERE Name='{department}'"
-#         return sql_query
-
-#     elif "hired after" in user_query:
-#         # Example: "List all employees hired after 2021-01-01"
-#         date = user_query.split()[-1]
-#         sql_query = f"SELECT Name FROM Employees WHERE Hire_Date > '{date}'"
-#         return sql_query
-
-#     elif "total salary expense" in user_query:
-#         # Example: "What is the total salary expense for the Sales department?"
-#         words = user_query.split()
-#         department = words[-2]
-#         sql_query = f"SELECT SUM(Salary) FROM Employees WHERE Department='{department}'"
-#         return sql_query
-
-#     else:
-#         return None
 
 #------------------------------------------------------------
 
 def get_department_from_query(query):
-    departments = {"sales": "Sales", "engineering": "Engineering", "marketing": "Marketing"}  # Normalize case
+    departments = {"sales": "Sales", "engineering": "Engineering", "marketing": "Marketing"}  # Normalized
     for word in word_tokenize(query.lower()):
         if word in departments:
             return departments[word]
@@ -61,7 +27,7 @@ def generate_ngrams(query, n=3):
     words = word_tokenize(query.lower())  # Tokenize into words
     ngrams = list(chain.from_iterable(
         zip(*(words[i:] for i in range(n))) for n in range(1, len(words) + 1)
-    ))  # Generate 1-word, 2-word, ..., n-word tokens
+    ))  # Generate n-word tokens
     return [" ".join(ngram) for ngram in ngrams]
 
 def process_query(user_query):
@@ -96,7 +62,6 @@ def process_query(user_query):
             date_object = datetime.strptime(date, "%Y-%m-%d")
             date_only = date_object.date()
             sql_query = f"SELECT Name FROM Employees WHERE Hire_Date > '{date_only}'"
-            # params = (date,)
             return sql_query
     
     elif "hired before" in user_query:
@@ -114,7 +79,6 @@ def process_query(user_query):
         if match:
             emp1, emp2 = match[0]
             sql_query = f"SELECT Name, Hire_Date FROM Employees WHERE Name IN ('{emp1}', '{emp2}')"
-            # params = (emp1, emp2)
             return sql_query
     
     elif ((("employees" in tokens) or ("salary" in tokens) or ("hire date" in tokens) or ("department" in tokens)) and ("manager" in tokens)) or department:
@@ -160,12 +124,8 @@ def process_query(user_query):
     
     return None
 
-
-
 #------------------------------------------------------------
     
-
-
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -199,8 +159,6 @@ def query_db():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-#----------------------------------------------------------------
 #API Endpoint to list all the employees from EMployees table
 @app.route("/employees", methods=["GET"])
 def get_employees():
@@ -211,9 +169,6 @@ def get_employees():
     conn.close()
     
     return jsonify({"employees": employees})
-    # return employees
-
-#----------------------------------------------------------------
 
 # Run the Flask app
 if __name__ == "__main__":
